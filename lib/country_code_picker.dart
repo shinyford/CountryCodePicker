@@ -38,6 +38,7 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
 
   final List<CountryCode> countryCodes;
   final List<CountryCode> highlightedCountryCodes;
+  Widget selectionDialog;
 
   _CountryCodePickerState(this.countryCodes, favorites)
     : this.highlightedCountryCodes = List<CountryCode>.from(
@@ -83,6 +84,10 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
       selectedItem = countryCodes[0];
     }
 
+    Future(() {
+      selectionDialog = SelectionDialog(countryCodes, highlightedCountryCodes);
+    });
+
     super.initState();
 
     if (mounted) {
@@ -91,9 +96,13 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
   }
 
   void _showSelectionDialog() {
+    if (selectionDialog == null) {
+      selectionDialog = SelectionDialog(countryCodes, highlightedCountryCodes);
+    }
+
     showDialog(
       context: context,
-      builder: (_) => new SelectionDialog(countryCodes, highlightedCountryCodes),
+      builder: (_) => selectionDialog,
     ).then((e) {
       if (e != null) {
         setState(() {
