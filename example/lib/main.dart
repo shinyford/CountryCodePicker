@@ -25,8 +25,8 @@ class _MyAppState extends State<MyApp> {
           child: new CountryCodePicker(
               onChanged: print,
               // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-              initialSelection: 'IT',
-              favorites: ['+39', 'FR']),
+              initialSelection: 'IT'
+          ),
         )
       )
     );
