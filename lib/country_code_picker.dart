@@ -1,52 +1,52 @@
 library country_code_picker;
 
-import 'package:country_code_picker/celement.dart';
-import 'package:country_code_picker/country_codes.dart';
+import 'package:country_code_picker/country_code.dart';
+import 'package:country_code_picker/country_code_data.dart';
 import 'package:country_code_picker/selection_dialog.dart';
 import 'package:flutter/material.dart';
 
-export 'celement.dart';
+export 'country_code.dart';
 
 class CountryCodePicker extends StatefulWidget {
-  final Function(CElement) onChanged;
+  final Function(CountryCode) onChanged;
   final String initialSelection;
-  final List<String> favorite;
+  final List<String> favorites;
   final TextStyle textStyle;
   final EdgeInsetsGeometry padding;
 
-  CountryCodePicker(
-      {this.onChanged,
-      this.initialSelection,
-      this.favorite,
-      this.textStyle,
-      this.padding});
+  CountryCodePicker({
+    this.onChanged,
+    this.initialSelection,
+    this.favorites = const [],
+    this.textStyle,
+    this.padding
+  });
 
   @override
   State<StatefulWidget> createState() {
-    List<Map> jsonList = codes;
+    List<CountryCode> countryCodes =
+        countryCodeData
+          .map((countryCodeDatum) => CountryCode.from(countryCodeDatum))
+          .toList();
 
-    List<CElement> elements = jsonList
-        .map((s) => new CElement(
-              name: s['name'],
-              code: s['code'],
-              dialCode: s['dial_code'],
-              flagUri: 'flags/${s['code'].toLowerCase()}.png',
-            ))
-        .toList();
-
-    return new _CountryCodePickerState(elements);
+    return new _CountryCodePickerState(countryCodes, favorites);
   }
 }
 
 class _CountryCodePickerState extends State<CountryCodePicker> {
-  CElement selectedItem;
-  List<CElement> elements = [];
-  List<CElement> favoriteElements = [];
+  CountryCode selectedItem;
 
-  _CountryCodePickerState(this.elements);
+  final List<CountryCode> countryCodes;
+  final List<CountryCode> highlightedCountryCodes;
+
+  _CountryCodePickerState(this.countryCodes, favorites)
+    : this.highlightedCountryCodes = favorites.map((String code) =>
+        countryCodes.firstWhere((e) => e.code == code || e.dialCode == code)
+      ).toList();
 
   @override
-  Widget build(BuildContext context) => new FlatButton(
+  Widget build(BuildContext context) =>
+      FlatButton(
         child: Flex(
           direction: Axis.horizontal,
           mainAxisSize: MainAxisSize.min,
@@ -54,11 +54,7 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
             Flexible(
               child: Padding(
                 padding: const EdgeInsets.only(right: 16.0),
-                child: Image.asset(
-                  selectedItem.flagUri,
-                  package: 'country_code_picker',
-                  width: 32.0,
-                ),
+                child: Text(selectedItem.flag, style: TextStyle(fontSize: 20.0))
               ),
             ),
             Flexible(
@@ -76,22 +72,15 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
   @override
   initState() {
     if (widget.initialSelection != null) {
-      selectedItem = elements.firstWhere(
+      selectedItem = countryCodes.firstWhere(
           (e) =>
               (e.code.toUpperCase() == widget.initialSelection.toUpperCase()) ||
               (e.dialCode == widget.initialSelection.toString()),
-          orElse: () => elements[0]);
+          orElse: () => countryCodes[0]);
     } else {
-      selectedItem = elements[0];
+      selectedItem = countryCodes[0];
     }
 
-    favoriteElements = elements
-        .where((e) =>
-            widget.favorite.firstWhere(
-                (f) => e.code == f.toUpperCase() || e.dialCode == f.toString(),
-                orElse: () => null) !=
-            null)
-        .toList();
     super.initState();
 
     if (mounted) {
@@ -102,7 +91,7 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
   void _showSelectionDialog() {
     showDialog(
       context: context,
-      builder: (_) => new SelectionDialog(elements, favoriteElements),
+      builder: (_) => new SelectionDialog(countryCodes, highlightedCountryCodes),
     ).then((e) {
       if (e != null) {
         setState(() {
@@ -114,9 +103,7 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
     });
   }
 
-  void _publishSelection(CElement e) {
-    if (widget.onChanged != null) {
-      widget.onChanged(e);
-    }
+  void _publishSelection(CountryCode e) {
+    if (widget.onChanged != null) widget.onChanged(e);
   }
 }

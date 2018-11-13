@@ -28,18 +28,18 @@ Just put the component in your application setting the onChanged callback.
 Note: Your onChanged function can be any function of the type shown below:
 
 ```dart
-(CElement)->dynamic
+(CountryCode)->dynamic
 
 ```
 Example:
 
 ```dart
 
-void _onCountryChange(CElement cElement) {
+void _onCountryChange(CountryCode CountryCode) {
     //Todo : manipulate the selected country code here
-    print("New Country selected: " + cElement.toString());
+    print("New CountryCode selected: " + CountryCode.toString());
   }
-  
+
 ```
 
 
