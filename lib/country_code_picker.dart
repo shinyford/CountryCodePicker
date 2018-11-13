@@ -40,9 +40,11 @@ class _CountryCodePickerState extends State<CountryCodePicker> {
   final List<CountryCode> highlightedCountryCodes;
 
   _CountryCodePickerState(this.countryCodes, favorites)
-    : this.highlightedCountryCodes = favorites.map((String code) =>
-        countryCodes.firstWhere((e) => e.code == code || e.dialCode == code)
-      ).toList();
+    : this.highlightedCountryCodes = List<CountryCode>.from(
+        favorites.map((String code) =>
+          countryCodes.firstWhere((e) => e.code == code || e.dialCode == code)
+        ).toList()
+      );
 
   @override
   Widget build(BuildContext context) =>
