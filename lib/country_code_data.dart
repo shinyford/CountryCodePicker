@@ -1,4 +1,4 @@
-List<Map> countryCodeData = [
+List<Map<String, String>> countryCodeData = [
   {"name": "افغانستان", "code": "AF", "dial_code": "+93"},
   {"name": "Åland", "code": "AX", "dial_code": "+358"},
   {"name": "Shqipëria", "code": "AL", "dial_code": "+355"},

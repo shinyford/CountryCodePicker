@@ -19,7 +19,7 @@ class CountryCode {
       String.fromCharCode(code.codeUnitAt(0) + FLAG_UTF8_OFFSET) +
       String.fromCharCode(code.codeUnitAt(1) + FLAG_UTF8_OFFSET);
 
-  factory CountryCode.from(s) =>
+  factory CountryCode.from(Map<String, String> s) =>
       CountryCode(
         name: s['name'],
         code: s['code'],

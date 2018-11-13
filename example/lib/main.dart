@@ -17,16 +17,18 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-        home: new Scaffold(
-            appBar: new AppBar(
-              title: const Text('CountryPicker Example'),
-            ),
-            body: new Center(
-              child: new CountryCodePicker(
-                  onChanged: print,
-                  // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                  initialSelection: 'IT',
-                  favorite: ['+39', 'FR']),
-            )));
+      home: new Scaffold(
+        appBar: new AppBar(
+          title: const Text('CountryPicker Example'),
+        ),
+        body: new Center(
+          child: new CountryCodePicker(
+              onChanged: print,
+              // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+              initialSelection: 'IT',
+              favorites: ['+39', 'FR']),
+        )
+      )
+    );
   }
 }
