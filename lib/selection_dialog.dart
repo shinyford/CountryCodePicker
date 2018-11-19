@@ -19,7 +19,16 @@ class _SelectionDialogState extends State<SelectionDialog> {
   List<CountryCode> shownElements = [];
 
   @override
-  Widget build(BuildContext context) => SimpleDialog(
+  Widget build(BuildContext context) {
+    final List<CountryCode> options = [];
+    final Size size = MediaQuery.of(context).size;
+    if (widget.highlightedCountryCodes.isNotEmpty) {
+      options
+        ..addAll(widget.highlightedCountryCodes)
+        ..add(null);
+    }
+    options..addAll(shownElements);
+    return SimpleDialog(
       title: Column(
         children: [
           TextField(
@@ -29,61 +38,41 @@ class _SelectionDialogState extends State<SelectionDialog> {
         ],
       ),
       children: [
-        widget.highlightedCountryCodes.isEmpty
-            ? Container()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: []
-                  ..addAll(widget.highlightedCountryCodes.map((f) {
-                    return SimpleDialogOption(
-                        child: Flex(
-                          direction: Axis.horizontal,
-                          children: [
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 16.0),
-                                child: Text(f.flag, style: TextStyle(fontSize: 20.0))
-                              ),
-                            ),
-                            Flexible(
-                              fit: FlexFit.tight,
-                              child: Text(
-                                f.toLongString(),
-                                overflow: TextOverflow.fade,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          _selectItem(f);
-                        });
-                  }).toList())
-                  ..add(Divider())),
-      ]..addAll(shownElements
-          .map((e) => SimpleDialogOption(
-              key: Key(e.toLongString()),
-              child: Flex(
-                direction: Axis.horizontal,
-                children: [
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: Text(e.flag, style: TextStyle(fontSize: 20.0))
-                    ),
-                  ),
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: Text(
-                      e.toLongString(),
-                      overflow: TextOverflow.fade,
-                    ),
-                  ),
-                ],
+        Container(
+          height: size.height - 300.0,
+          width: size.width - 300.0,
+          child: ListView.builder(
+            itemCount: options.length,
+            itemBuilder: (BuildContext _, int index) => _countryCode(options[index]),
+            itemExtent: 40.0,
+          ),
+        )
+      ]
+    );
+  }
+
+Widget _countryCode(CountryCode cc) =>
+  cc == null
+    ? Divider()
+    : SimpleDialogOption(
+        key: Key(cc.toLongString()),
+        child: Stack(
+          children: [
+            Text(cc.flag, style: TextStyle(fontSize: 25.0)),
+            Positioned(
+              left: 35.0,
+              top: 6.0,
+              child: Text(
+                cc.toLongString(),
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.fade,
               ),
-              onPressed: () {
-                _selectItem(e);
-              }))
-          .toList()));
+            ),
+          ],
+        ),
+        onPressed: () {
+          _selectItem(cc);
+        });
 
   @override
   void initState() {
